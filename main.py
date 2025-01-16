@@ -2,31 +2,30 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-VERIFY_TOKEN = "your_verify_token_here"
+VERIFY_TOKEN = "your_verify_token"
 
-# Проверка токена для валидации вебхука
+# Checking the token for webhook validation
 @app.route('/webhook', methods=['GET'])
 def verify_webhook():
-    print(request.headers)
-    print(request.get__json())
+
     token = request.args.get('hub.verify_token')
     challenge = request.args.get('hub.challenge')
     if token == VERIFY_TOKEN:
-        print("Проверка токена прошла успешно")
+        print("Token verification was successful")
         return challenge, 200
     return "Forbidden", 403
 
-# Обработка входящих данных
+# Processing incoming data
 @app.route('/webhook', methods=['POST'])
 def handle_webhook():
     data = request.get_json()
-    print(data)
+
     if data:
-        print("Получено событие:", data)
-        # Здесь можно добавить обработку входящих сообщений
+        print("Received event:", data)
+        # Here you can add processing of incoming messages
         for entry in data.get('entry', []):
             for messaging_event in entry.get('messaging', []):
-                print("Событие Direct Messages:", messaging_event)
+                print("Event Direct Messages:", messaging_event)
     return "EVENT_RECEIVED", 200
 
 if __name__ == "__main__":
